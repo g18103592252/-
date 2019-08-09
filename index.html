@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    
+</body>
+<script>
+     var data = [
+        {
+            name: '王杰',
+            sbzhi: 300
+        },
+        {
+            name: '王杰1',
+            sbzhi: 200
+        },
+        {
+            name: '王杰2',
+            sbzhi: 500
+        },
+        {
+            name: '王杰3',
+            sbzhi: 600
+        },
+        {
+            name: '王杰4',
+            sbzhi: 800
+        },
+        {
+            name: '王杰5',
+            sbzhi: 200
+        },
+
+    ]
+
+    let canvas = document.createElement('canvas');
+    let W_H = 500;
+    canvas.width = W_H;
+    canvas.height = W_H;
+    canvas.style.border = '1px solid #ccc';
+    document.body.appendChild(canvas);
+    let ctx = canvas.getContext('2d');
+
+    var newDate = JSON.parse(JSON.stringify(data)).sort(function (a, b) {
+        return b.sbzhi - a.sbzhi;
+    })[0].sbzhi;
+    var margin = 400 / (data.length + 1);
+
+    //移动画布
+    ctx.translate(50, 450);
+
+
+    canvas.addEventListener('mousemove', function (e) {
+        ctx.clearRect(-50, -450, 500, 500);
+        drow(e);
+    })
+
+
+    drow();
+    function drow(e) {
+        //画轴
+        ctx.beginPath();
+        //y轴
+        ctx.moveTo(0, 0);
+        ctx.lineTo(0, -400);
+        //x轴
+        ctx.moveTo(0, 0);
+        ctx.lineTo(400, 0);
+        ctx.stroke();
+
+
+        //画刻度
+        ctx.save();
+        ctx.textBaseline = 'middle';
+        ctx.textAlign = 'end';
+        for (var i = 50; i < 450; i += 50) {
+            ctx.beginPath();
+            ctx.moveTo(-5, -i);
+            ctx.lineTo(400, -i);
+            ctx.fillText(Math.floor(newDate * (i / 400)), -5, -i);
+            ctx.stroke();
+        }
+        ctx.restore();
+
+        //画数据
+        ctx.textAlign = 'centent';
+        ctx.textBaseline = 'middle';
+        for (var i = 0; i < data.length; i++) {
+
+            ctx.save();
+            ctx.beginPath();
+
+            ctx.rect(margin * i + 50, 0, 20, -data[i].sbzhi / newDate * 400);
+            ctx.closePath();
+
+            if (e && ctx.isPointInPath(e.offsetX, e.offsetY)) {
+                ctx.fillStyle = 'red';
+                ctx.fillText(data[i].sbzhi, margin * i + 49, -data[i].sbzhi / newDate * 400 - 10);
+            }
+            ctx.fillText(data[i].name, margin * i + 50, 15);
+            ctx.fill();
+            ctx.restore();
+        }
+    }
+
+</script>
+</html>
